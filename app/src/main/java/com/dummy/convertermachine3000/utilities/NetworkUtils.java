@@ -23,8 +23,14 @@ public class NetworkUtils {
     final static String YAHOO_FINAL_URL =
             "=X";
 
+    final static private String FIXER_BASE_URL=
+            "http://api.fixer.io/latest?base=";
+    final static private String FIXER_CONNECTOR_URL=
+            "&symbols=";
+
     public static URL buildUrl(String codeOne, String codeTwo){
-        Uri builtUri = Uri.parse(YAHOO_BASE_URL+codeOne+codeTwo+YAHOO_FINAL_URL);
+        //Uri builtUri = Uri.parse(YAHOO_BASE_URL+codeOne+codeTwo+YAHOO_FINAL_URL);
+        Uri builtUri = Uri.parse(FIXER_BASE_URL+codeOne+FIXER_CONNECTOR_URL+codeTwo);
         URL url = null;
 
         try{

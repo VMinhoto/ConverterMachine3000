@@ -8,11 +8,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.dummy.convertermachine3000.utilities.ConverterJsonUtils;
 
+import com.dummy.convertermachine3000.utilities.ConverterJsonUtils;
 import com.dummy.convertermachine3000.utilities.NetworkUtils;
 
 import java.io.IOException;
 import java.net.URL;
+
+import static com.dummy.convertermachine3000.utilities.ConverterJsonUtils.getSimpleConvertingStringFromJson;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         mURLDisplayTextView = (TextView) findViewById(R.id.made_URL_text_view);
         mSearchDisplayTextView = (TextView) findViewById(R.id.search_result_text_view);
 
+        //TODO Dar handle de excepsions tipo o gajo meter números estúpidos. Necessário implementar double?
         final Button button = (Button) findViewById(R.id.search_button);
         button.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -43,19 +48,34 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    //TODO Estes valores não são fixos. Implementar esta cena a mudar conforme selec.
+    String currencyOne = "EUR";
+    String currencyTwo = "USD";
+
     void makeSearchQuery(){
-        //TODO Estes valores não são fixos. Implementar esta cena a mudar conforme selec.
-        String currencyOne = "EUR";
-        String currencyTwo = "CNY";
+
+
         URL searchUrl = NetworkUtils.buildUrl(currencyOne,currencyTwo);
         mURLDisplayTextView.setText(searchUrl.toString());
         String searchResults = null;
         new querryTask().execute(searchUrl);
-
     }
 
+
+    //TODO Arrendondar a duas casas
+    //TODO meter simbolos das moedas
+    void convert(String s){
+        float numberInserted = Float.parseFloat(mValueInsertedEditText.getText().toString());
+        float conversionRate = Float.parseFloat(s);
+        mValueConvertedTextView.setText(Float.toString(numberInserted*conversionRate));
+    }
+
+
+
+
     //TODO Implementar LOADER- AsyncTask cria atividades zombies se se rodar enq isto dá load
-    public class querryTask extends AsyncTask<URL, Void, String>{
+    public class querryTask extends AsyncTask<URL, Void, String> {
 
         @Override
         protected String doInBackground(URL... urls) {
@@ -72,7 +92,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             if (s != null && !s.equals("")){
+                s=getSimpleConvertingStringFromJson(s,currencyTwo);
                 mSearchDisplayTextView.setText(s);
+                convert(s);
             }
         }
     }
